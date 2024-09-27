@@ -23,12 +23,20 @@ class Stack {
 
         // Function to add an element to the stack
         void push(int x) {
-            //Write your code here
+            if (isFull()) {
+                cout << "Cannot pop due to Stack overflow" << endl;
+                return;
+            }
+            arr[++top] = x;
         }
 
         // Function to pop the top element
         int pop() {
-            //Write your code here
+            if (isEmpty()) {
+                cout << "Cannot pop due to Stack underflow" << endl;
+                return -1;
+            }
+            return arr[top--];
         }
 
         // Function to display the elements of the stack
@@ -47,12 +55,12 @@ class Stack {
     
         // Function to check if the stack is full
         bool isFull() const {
-            //Write your code here
+            return top == capacity - 1; //Using isFull function to just compare top and capacity - 1, which tells if the stack is full 
         }
 
         // Function to check if the stack is empty
         bool isEmpty() const {
-            //Write your code here
+            return top == -1; // Similarly, isEmpty function compares top with -1 to check if stack is empty  
         }
 
 };
@@ -74,7 +82,26 @@ void displayTowers() {
 }
 
 void rearrangeDisks(int n, Stack& A, Stack& B, Stack& C, char from, char to, char aux) {
-    //Write your code here
+    if (n == 1) {
+        int disk = A.pop();
+        C.push(disk);
+        cout << " Disc goes " << disk << " from " << from << " to " << to << endl;
+        displayTowers();  // This displays the towers after the move has been made
+        return;
+    }
+    
+    //this is how the recursion is working
+    // we move disks from A to B, using C as a placeholder peg
+    rearrangeDisks(n - 1, A, C, B, from, aux, to);
+    
+    // here the discs are moved from A to C
+    int disk = A.pop();
+    C.push(disk);
+    cout << " Disc goes " << disk << " from " << from << " to " << to << endl;
+    displayTowers();  // Display the towers after the move
+    
+    // here we do the same thing, disks go from B to C, using A as auxiliary
+    rearrangeDisks(n - 1, B, A, C, aux, to, from);
 }
 
 int main() { // The main function has been defined for you, do not edit anything here.
@@ -90,7 +117,7 @@ int main() { // The main function has been defined for you, do not edit anything
         A->push(i);
     }
 
-    displayTowers();
+    displayTowers(); 
 
     rearrangeDisks(n, *A, *B, *C, 'A', 'C', 'B');
 
